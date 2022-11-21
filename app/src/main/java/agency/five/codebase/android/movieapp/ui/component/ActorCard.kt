@@ -1,4 +1,4 @@
-package agency.five.codebase.android.movieapp.component
+package agency.five.codebase.android.movieapp.ui.component
 
 import agency.five.codebase.android.movieapp.mock.MoviesMock
 import androidx.compose.foundation.layout.*
@@ -32,25 +32,21 @@ fun ActorCard(actorCardViewState: ActorCardViewState, modifier: Modifier) {
             AsyncImage(
                 model = actorCardViewState.imageUrl,
                 contentDescription = actorCardViewState.name,
-                modifier = Modifier
-                    .weight(0.8F),
+                modifier = Modifier.weight(0.8F),
                 contentScale = ContentScale.Crop
             )
             Text(
-                modifier = Modifier
-                    .padding(top = 10.dp),
+                modifier = Modifier.padding(top = 10.dp),
                 text = actorCardViewState.name,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
             )
             Text(
-                modifier = Modifier
-                    .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
+                modifier = Modifier.padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
                 text = actorCardViewState.character,
                 color = Color.Gray,
                 fontSize = 10.sp
-
             )
         }
     }

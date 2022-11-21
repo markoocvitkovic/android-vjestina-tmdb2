@@ -1,4 +1,4 @@
-package agency.five.codebase.android.movieapp.component
+package agency.five.codebase.android.movieapp.ui.component
 
 import agency.five.codebase.android.movieapp.R
 import androidx.annotation.StringRes
@@ -33,8 +33,7 @@ fun MovieCategoryLabel(
     if (movieCategoryLabelViewState.isSelected) {
         SelectedText(
             movieCategoryLabelViewState = movieCategoryLabelViewState,
-            modifier = modifier
-                .width(intrinsicSize = IntrinsicSize.Max)
+            modifier = modifier.width(intrinsicSize = IntrinsicSize.Max)
         )
     } else {
         UnselectedText(
@@ -49,9 +48,7 @@ fun SelectedText(
     movieCategoryLabelViewState: MovieCategoryLabelViewState,
     modifier: Modifier
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = SelectTextSource(movieCategoryLabelViewState = movieCategoryLabelViewState),
             color = Color.Black,

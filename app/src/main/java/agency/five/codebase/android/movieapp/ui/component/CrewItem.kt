@@ -1,4 +1,4 @@
-package agency.five.codebase.android.movieapp.component
+package agency.five.codebase.android.movieapp.ui.component
 
 import agency.five.codebase.android.movieapp.mock.MoviesMock
 import androidx.compose.foundation.layout.Column
