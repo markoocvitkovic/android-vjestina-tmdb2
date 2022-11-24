@@ -1,4 +1,4 @@
-package agency.five.codebase.android.movieapp.component
+package agency.five.codebase.android.movieapp.ui.component
 
 import agency.five.codebase.android.movieapp.mock.MoviesMock
 import agency.five.codebase.android.movieapp.model.Movie
@@ -14,22 +14,28 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
-fun MovieCard(modifier: Modifier,movie: Movie)
-{
+fun MovieCard(modifier: Modifier, movie: Movie) {
     Card(
-        modifier = modifier.padding(15.dp).width(110.dp).height(200.dp).clickable {  },
+        modifier = modifier
+            .padding(15.dp)
+            .width(110.dp)
+            .height(200.dp)
+            .clickable { },
         shape = RoundedCornerShape(20.dp),
         elevation = 5.dp
     ) {
-        Box{
+        Box {
             AsyncImage(
                 model = movie.imageUrl,
                 contentDescription = movie.title,
                 contentScale = ContentScale.Crop
             )
-            FavoriteButton(modifier = Modifier
-                .padding(1.dp)
-                .size(30.dp)
+            FavoriteButton(
+                modifier = Modifier
+                    .padding(1.dp)
+                    .size(30.dp),
+                isFavorite = movie.isFavorite,
+                onClick = { }
             )
         }
     }
@@ -37,8 +43,9 @@ fun MovieCard(modifier: Modifier,movie: Movie)
 
 @Preview(showBackground = true)
 @Composable
-fun MovieCardPreview(){
+fun MovieCardPreview() {
     val movie = MoviesMock.getMoviesList()[0]
+
     val movieCardModifier = Modifier
         .padding(5.dp)
         .width(140.dp)

@@ -1,4 +1,4 @@
-package agency.five.codebase.android.movieapp.component
+package agency.five.codebase.android.movieapp.ui.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -17,11 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ProgressBar(movieProgress: Float,modifier: Modifier)
-{
-    Box(modifier = modifier.wrapContentSize()){
-        Canvas(modifier = modifier.size(60.dp).padding(5.dp))
-        {
+fun ProgressBar(movieProgress: Float, modifier: Modifier) {
+    Box(modifier = modifier.wrapContentSize()) {
+        Canvas(
+            modifier = modifier
+                .size(60.dp)
+                .padding(5.dp)
+        ) {
             drawArc(
                 color = Color(100, 300, 100),
                 alpha = 0.2f,
@@ -33,12 +35,13 @@ fun ProgressBar(movieProgress: Float,modifier: Modifier)
             drawArc(
                 color = Color(61, 235, 75),
                 startAngle = 270f,
-                sweepAngle = movieProgress*360f,
+                sweepAngle = movieProgress * 360f,
                 useCenter = false,
                 style = Stroke(width = 5.dp.toPx())
             )
         }
-        Text(text = (movieProgress*100).toString(),
+        Text(
+            text = (movieProgress * 100).toString(),
             fontSize = 15.sp,
             color = Color.Black,
             modifier = modifier.align(Alignment.Center)
@@ -48,7 +51,7 @@ fun ProgressBar(movieProgress: Float,modifier: Modifier)
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewUserScoreProgressBar(){
-    val score:Float = getMovieDetails().voteAverage
+private fun PreviewUserScoreProgressBar() {
+    val score: Float = getMovieDetails().voteAverage
     ProgressBar(score, modifier = Modifier)
 }
