@@ -21,14 +21,15 @@ sealed class MovieCategoryLabelTextViewState {
 
 data class MovieCategoryLabelViewState(
     val itemId: Int,
-    val isSelected: Boolean,
+    var isSelected: Boolean,
     val categoryText: MovieCategoryLabelTextViewState
 )
 
 @Composable
 fun MovieCategoryLabel(
     movieCategoryLabelViewState: MovieCategoryLabelViewState,
-    modifier: Modifier
+    modifier: Modifier,
+    onClick: (Int) -> Unit
 ) {
     if (movieCategoryLabelViewState.isSelected) {
         SelectedText(
@@ -38,7 +39,8 @@ fun MovieCategoryLabel(
     } else {
         UnselectedText(
             movieCategoryLabelViewState = movieCategoryLabelViewState,
-            modifier = modifier
+            modifier = modifier,
+            onClick=onClick
         )
     }
 }
@@ -64,7 +66,8 @@ fun SelectedText(
 @Composable
 fun UnselectedText(
     movieCategoryLabelViewState: MovieCategoryLabelViewState,
-    modifier: Modifier
+    modifier: Modifier,
+    onClick: (Int) -> Unit
 ) {
     Text(
         text = SelectTextSource(movieCategoryLabelViewState = movieCategoryLabelViewState),
@@ -91,6 +94,7 @@ fun MovieCategoryLabelPreview() {
     val categoryViewState2 = MovieCategoryLabelViewState(1, true, stringRes)
     MovieCategoryLabel(
         movieCategoryLabelViewState = categoryViewState2,
-        modifier = Modifier.padding(5.dp)
+        modifier = Modifier.padding(5.dp),
+        onClick = {}
     )
 }
