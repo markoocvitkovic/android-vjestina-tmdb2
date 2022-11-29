@@ -21,7 +21,7 @@ sealed class MovieCategoryLabelTextViewState {
 
 data class MovieCategoryLabelViewState(
     val itemId: Int,
-    val isSelected: Boolean,
+    var isSelected: Boolean,
     val categoryText: MovieCategoryLabelTextViewState
 )
 

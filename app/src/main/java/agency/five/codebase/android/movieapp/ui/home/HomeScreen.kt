@@ -63,7 +63,9 @@ val upcomingCategoryViewState = homeScreenMapper.toHomeMovieCategoryViewState(
 )
 
 @Composable
-fun HomeScreenRoute(onNavigateToMovieDetails: (Int) -> Unit) {
+fun HomeScreenRoute(
+    onNavigateToMovieDetails: (Int) -> Unit
+) {
     var popularViewState by remember { mutableStateOf(popularCategoryViewState) }
     var nowPlayingViewState by remember { mutableStateOf(nowPlayingCategoryViewState) }
     var upcomingViewState by remember { mutableStateOf(upcomingCategoryViewState) }

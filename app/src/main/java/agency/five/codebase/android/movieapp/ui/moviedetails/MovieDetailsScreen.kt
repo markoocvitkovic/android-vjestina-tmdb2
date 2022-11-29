@@ -120,7 +120,8 @@ fun MovieCrewman(movieDetailsViewState: MovieDetailsViewState) {
 }
 
 @Composable
-fun MovieOverview(movieDetailsViewState: MovieDetailsViewState) {
+fun MovieOverview(
+    movieDetailsViewState: MovieDetailsViewState) {
     Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium)) {
         Text(
             text = stringResource(id = R.string.overview),
@@ -138,7 +139,9 @@ fun MovieOverview(movieDetailsViewState: MovieDetailsViewState) {
 }
 
 @Composable
-fun MovieImage(movieDetailsViewState: MovieDetailsViewState) {
+fun MovieImage(
+    movieDetailsViewState: MovieDetailsViewState
+) {
     Box(contentAlignment = Alignment.BottomStart) {
         AsyncImage(
             model = movieDetailsViewState.imageUrl,
