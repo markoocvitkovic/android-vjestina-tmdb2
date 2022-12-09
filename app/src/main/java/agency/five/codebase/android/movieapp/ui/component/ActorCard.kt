@@ -16,13 +16,17 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
 data class ActorCardViewState(
+    val id: Int,
     val imageUrl: String?,
     val name: String,
     val character: String
 )
 
 @Composable
-fun ActorCard(actorCardViewState: ActorCardViewState, modifier: Modifier) {
+fun ActorCard(
+    actorCardViewState: ActorCardViewState,
+    modifier: Modifier
+) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
@@ -57,6 +61,7 @@ fun ActorCard(actorCardViewState: ActorCardViewState, modifier: Modifier) {
 private fun ActorCardPreview() {
     val actor = MoviesMock.getActor()
     val actorCardViewState = ActorCardViewState(
+        id = actor.id,
         name = actor.name,
         imageUrl = actor.imageUrl,
         character = actor.character
