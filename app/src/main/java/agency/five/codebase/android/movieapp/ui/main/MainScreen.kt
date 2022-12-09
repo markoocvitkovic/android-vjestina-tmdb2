@@ -141,8 +141,7 @@ private fun BottomNavigationBar(
     onNavigateToDestination: (NavigationItem) -> Unit,
     currentDestination: NavDestination?,
 ) {
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colors.background) {
+    BottomNavigation(backgroundColor = MaterialTheme.colors.background) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -151,7 +150,7 @@ private fun BottomNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             destinations.forEach { destination ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally,) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (currentDestination != null) {
                         Image(
                             painter = painterResource(

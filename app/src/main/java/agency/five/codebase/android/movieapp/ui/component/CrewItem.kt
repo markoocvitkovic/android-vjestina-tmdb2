@@ -20,9 +20,7 @@ fun CrewItem(
     crewItemViewState: CrewItemViewState,
     modifier: Modifier
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = crewItemViewState.name,
             fontWeight = FontWeight.Bold,

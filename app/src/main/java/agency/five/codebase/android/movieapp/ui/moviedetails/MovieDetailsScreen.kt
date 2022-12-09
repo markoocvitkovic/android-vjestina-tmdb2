@@ -42,8 +42,7 @@ fun MovieDetailsRoute() {
 
 @Composable
 fun MovieDetailsScreen(movieDetailsViewState: MovieDetailsViewState) {
-    LazyColumn(
-        modifier = Modifier.background(color = MaterialTheme.colors.background)) {
+    LazyColumn(modifier = Modifier.background(color = MaterialTheme.colors.background)) {
         item { MovieImage(movieDetailsViewState) }
 
         item { MovieOverview(movieDetailsViewState) }
@@ -101,12 +100,9 @@ fun MovieCrewman(movieDetailsViewState: MovieDetailsViewState) {
         columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(dimensionResource(id = R.dimen.medium_spacing)),
         userScrollEnabled = false,
-        modifier = Modifier
-            .height(dimensionResource(id = R.dimen.crewman_height))
+        modifier = Modifier.height(dimensionResource(id = R.dimen.crewman_height))
     ) {
-        items(
-            movieDetailsViewState.crew,
-        ) { crewman ->
+        items(movieDetailsViewState.crew) { crewman ->
             CrewItem(
                 crewItemViewState = CrewItemViewState(
                     id = crewman.id,
@@ -124,13 +120,8 @@ fun MovieCrewman(movieDetailsViewState: MovieDetailsViewState) {
 }
 
 @Composable
-fun MovieOverview(
-    movieDetailsViewState: MovieDetailsViewState
-) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = MaterialTheme.spacing.medium)
-    ) {
+fun MovieOverview(movieDetailsViewState: MovieDetailsViewState) {
+    Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium)) {
         Text(
             text = stringResource(id = R.string.overview),
             fontSize = 17.sp,
@@ -147,9 +138,7 @@ fun MovieOverview(
 }
 
 @Composable
-fun MovieImage(
-    movieDetailsViewState: MovieDetailsViewState
-) {
+fun MovieImage(movieDetailsViewState: MovieDetailsViewState) {
     Box(contentAlignment = Alignment.BottomStart) {
         AsyncImage(
             model = movieDetailsViewState.imageUrl,
