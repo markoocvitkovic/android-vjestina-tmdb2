@@ -18,6 +18,7 @@ class FavoritesMapperImpl : FavoritesMapper {
     private fun mapMovie(movie: Movie) = FavoritesMovieViewState(
         id = movie.id,
         movieCardViewState = MovieCardViewState(
+            id = movie.id,
             imageUrl = movie.imageUrl,
             isFavorite = movie.isFavorite,
             title = movie.title

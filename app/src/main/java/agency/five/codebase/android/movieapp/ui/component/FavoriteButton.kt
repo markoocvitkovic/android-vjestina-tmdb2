@@ -24,7 +24,7 @@ fun FavoriteButton(
     Image(
         painter = painterResource(id = if (favorite.value) R.drawable.ic_favorite else R.drawable.ic_favorite_selected),
         contentDescription = contentDescription,
-        modifier = modifier.clickable { favorite.value = favorite.value.not() }
+        modifier = modifier.clickable { onClick() }
     )
 }
 
