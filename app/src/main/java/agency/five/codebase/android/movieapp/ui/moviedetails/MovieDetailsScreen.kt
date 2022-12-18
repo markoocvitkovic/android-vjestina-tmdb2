@@ -35,7 +35,10 @@ private val MovieDetailsMapper: MovieDetailsMapper = MovieDetailsMapperImpl()
 val movieDetailsViewState = MovieDetailsMapper.toMovieDetailsViewState(MoviesMock.getMovieDetails())
 
 @Composable
-fun MovieDetailsRoute() {
+fun MovieDetailsRoute(
+    viewModel: MovieDetailsViewModel,
+    modifier: Modifier = Modifier
+) {
     val movieDetailsViewState by remember { mutableStateOf(movieDetailsViewState) }
     MovieDetailsScreen(movieDetailsViewState = movieDetailsViewState)
 }

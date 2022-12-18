@@ -20,4 +20,5 @@
     <dimen name="movie_image_height">350.0dp</dimen>
     <dimen name="userscore_size">60.0dp</dimen>
     <dimen name="favorite_button_size">50.0dp</dimen>
+    <dimen name="small_spacing">6.0dp</dimen>
 </resources>

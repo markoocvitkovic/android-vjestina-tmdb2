@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 data class MovieCardViewState(
+    val id: Int,
     val imageUrl: String?,
     val isFavorite: Boolean,
     val title: String
@@ -22,15 +23,15 @@ data class MovieCardViewState(
 fun MovieCard(
     modifier: Modifier,
     movieCardViewState: MovieCardViewState,
-    onFavoriteButtonClicked: () -> Unit,
-    onClick: () -> Unit
+    onFavoriteButtonClicked: (Int) -> Unit,
+    onClick: (Int) -> Unit
 ) {
     Card(
         modifier = modifier
             .padding(15.dp)
             .width(110.dp)
             .height(200.dp)
-            .clickable { },
+            .clickable { onClick(movieCardViewState.id)},
         shape = RoundedCornerShape(20.dp),
         elevation = 5.dp
     ) {
@@ -45,7 +46,7 @@ fun MovieCard(
                     .padding(1.dp)
                     .size(30.dp),
                 isFavorite = movieCardViewState.isFavorite,
-                onClick = { }
+                onClick = { onFavoriteButtonClicked(movieCardViewState.id) }
             )
         }
     }
@@ -56,6 +57,7 @@ fun MovieCard(
 fun MovieCardPreview() {
     val movie = MoviesMock.getMoviesList()[4]
     val movieCardViewState = MovieCardViewState(
+        id = movie.id,
         imageUrl = movie.imageUrl,
         isFavorite = movie.isFavorite,
         title = movie.title
