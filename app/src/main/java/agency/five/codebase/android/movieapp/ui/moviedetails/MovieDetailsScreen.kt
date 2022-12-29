@@ -35,7 +35,10 @@ private val MovieDetailsMapper: MovieDetailsMapper = MovieDetailsMapperImpl()
 val movieDetailsViewState = MovieDetailsMapper.toMovieDetailsViewState(MoviesMock.getMovieDetails())
 
 @Composable
-fun MovieDetailsRoute() {
+fun MovieDetailsRoute(
+    viewModel: MovieDetailsViewModel,
+    modifier: Modifier = Modifier
+) {
     val movieDetailsViewState by remember { mutableStateOf(movieDetailsViewState) }
     MovieDetailsScreen(movieDetailsViewState = movieDetailsViewState)
 }
@@ -120,7 +123,8 @@ fun MovieCrewman(movieDetailsViewState: MovieDetailsViewState) {
 }
 
 @Composable
-fun MovieOverview(movieDetailsViewState: MovieDetailsViewState) {
+fun MovieOverview(
+    movieDetailsViewState: MovieDetailsViewState) {
     Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium)) {
         Text(
             text = stringResource(id = R.string.overview),
@@ -138,7 +142,9 @@ fun MovieOverview(movieDetailsViewState: MovieDetailsViewState) {
 }
 
 @Composable
-fun MovieImage(movieDetailsViewState: MovieDetailsViewState) {
+fun MovieImage(
+    movieDetailsViewState: MovieDetailsViewState
+) {
     Box(contentAlignment = Alignment.BottomStart) {
         AsyncImage(
             model = movieDetailsViewState.imageUrl,

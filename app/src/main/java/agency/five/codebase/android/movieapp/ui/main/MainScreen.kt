@@ -27,20 +27,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    var showBottomBar by remember { mutableStateOf(false) }
+    val showBottomBar by remember {
+        derivedStateOf {
+            navBackStackEntry?.destination?.route == NavigationItem.HomeDestination.route ||
+                    navBackStackEntry?.destination?.route == NavigationItem.FavoritesDestination.route
+        }
+    }
     val showBackIcon = !showBottomBar
     Scaffold(
         topBar = {
             TopBar(
                 navigationIcon = {
-                    if (showBackIcon) BackIcon(
-                        onBackClick = navController::popBackStack
-                    )
+                    if (showBackIcon) BackIcon(onBackClick = navController::popBackStack)
                 },
             )
         },
@@ -70,31 +75,36 @@ fun MainScreen() {
                 modifier = Modifier.padding(padding),
             ) {
                 composable(NavigationItem.HomeDestination.route) {
-                    showBottomBar = true
                     HomeScreenRoute(
                         onNavigateToMovieDetails = {
                             navController.navigate(
                                 MovieDetailsDestination.createNavigationRoute(it)
                             )
                         },
+                        viewModel = getViewModel()
                     )
                 }
                 composable(NavigationItem.FavoritesDestination.route) {
-                    showBottomBar = true
                     FavoritesRoute(
                         onNavigateToMovieDetails = {
                             navController.navigate(
                                 MovieDetailsDestination.createNavigationRoute(it)
                             )
                         },
+                        viewModel = getViewModel()
                     )
                 }
                 composable(
                     route = MovieDetailsDestination.route,
                     arguments = listOf(navArgument(MOVIE_ID_KEY) { type = NavType.IntType }),
                 ) {
-                    showBottomBar = false
-                    MovieDetailsRoute()
+                    MovieDetailsRoute(viewModel = getViewModel {
+                        parametersOf(
+                            it.arguments?.getInt(
+                                MOVIE_ID_KEY
+                            ) ?: throw IllegalArgumentException("No movie id found.")
+                        )
+                    })
                 }
             }
         }
@@ -102,7 +112,7 @@ fun MainScreen() {
 }
 
 @Composable
-private fun TopBar(navigationIcon: @Composable (() -> Unit)? = null) {
+private fun TopBar(navigationIcon: @Composable () -> Unit = {}) {
     Box(
         modifier = Modifier
             .background(color = Blue)
@@ -141,7 +151,9 @@ private fun BottomNavigationBar(
     onNavigateToDestination: (NavigationItem) -> Unit,
     currentDestination: NavDestination?,
 ) {
-    BottomNavigation(backgroundColor = MaterialTheme.colors.background) {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colors.background
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -150,12 +162,17 @@ private fun BottomNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             destinations.forEach { destination ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     if (currentDestination != null) {
                         Image(
                             painter = painterResource(
-                                id = if (currentDestination.route == destination.route) destination.selectedIconId
-                                else destination.unselectedIconId
+                                id = if (currentDestination.route == destination.route) {
+                                    destination.selectedIconId
+                                } else {
+                                    destination.unselectedIconId
+                                }
                             ),
                             contentDescription = null,
                             modifier = Modifier

@@ -19,6 +19,7 @@ data class CrewItemViewState(
 fun CrewItem(
     crewItemViewState: CrewItemViewState,
     modifier: Modifier
+
 ) {
     Column(modifier = modifier) {
         Text(
