@@ -1,60 +1,118 @@
 package agency.five.codebase.android.movieapp.data.repository
 
-import agency.five.codebase.android.movieapp.mock.FavoritesDBMock
-import agency.five.codebase.android.movieapp.mock.MoviesMock
+import agency.five.codebase.android.movieapp.data.database.DbFavoriteMovie
+import agency.five.codebase.android.movieapp.data.database.FavoriteMovieDao
+import agency.five.codebase.android.movieapp.data.network.MovieService
+import agency.five.codebase.android.movieapp.data.network.model.MovieResponse
 import agency.five.codebase.android.movieapp.model.Movie
 import agency.five.codebase.android.movieapp.model.MovieCategory
 import agency.five.codebase.android.movieapp.model.MovieDetails
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
-
-class FakeMovieRepository(
-    private val ioDispatcher: CoroutineDispatcher,
+class MovieRepositoryImpl(
+    private val movieService: MovieService,
+    private val movieDao: FavoriteMovieDao,
+    private val bgDispatcher: CoroutineDispatcher,
 ) : MovieRepository {
-    private val fakeMovies = MoviesMock.getMoviesList().toMutableList()
-    private val movies: Flow<List<Movie>> = FavoritesDBMock.favoriteIds
-        .mapLatest { favoriteIds ->
-            fakeMovies.map { movie ->
-                movie.copy(isFavorite = favoriteIds.contains(movie.id))
-            }
-        }
-        .flowOn(ioDispatcher)
 
-    override fun popularMovies(movieCategory: MovieCategory) = movies
-    override fun nowPlayingMovies(movieCategory: MovieCategory) = movies
-    override fun upcomingMovies(movieCategory: MovieCategory) = movies
-    override fun movieDetails(movieId: Int): Flow<MovieDetails> =
-        FavoritesDBMock.favoriteIds
-            .mapLatest { favoriteIds ->
-                val movieDetails = MoviesMock.getMovieDetails(movieId)
-                movieDetails.copy(
-                    movie = movieDetails.movie.copy(
-                        isFavorite = favoriteIds.contains(movieDetails.movie.id)
-                    )
+    private val moviesByCategory: Map<MovieCategory, Flow<List<Movie>>> = MovieCategory.values()
+        .associateWith { movieCategory ->
+            flow {
+                val movieResponse: MovieResponse = when (movieCategory) {
+                    MovieCategory.POPULAR_STREAMING -> movieService.fetchPopularMovies()
+
+                    MovieCategory.POPULAR_ON_TV -> movieService.fetchUpcomingMovies()
+
+                    MovieCategory.POPULAR_FOR_RENT -> movieService.fetchTopRatedMovies()
+
+                    MovieCategory.POPULAR_IN_THEATRES -> movieService.fetchNowPlayingMovies()
+
+                    MovieCategory.NOW_PLAYING_MOVIES -> movieService.fetchNowPlayingMovies()
+
+                    MovieCategory.NOW_PLAYING_TV -> movieService.fetchTopRatedMovies()
+
+                    MovieCategory.UPCOMING_TODAY -> movieService.fetchNowPlayingMovies()
+
+                    MovieCategory.UPCOMING_THIS_WEEK -> movieService.fetchTopRatedMovies()
+                }
+                emit(movieResponse.movies)
+
+            }.flatMapLatest { apiMovies ->
+                movieDao.favorites().map { favoriteMovies ->
+                    apiMovies.map { apiMovie ->
+                        apiMovie.toMovie(isFavorite = favoriteMovies.any { it.id == apiMovie.id })
+                    }
+                }
+            }.shareIn(
+                scope = CoroutineScope(bgDispatcher),
+                started = SharingStarted.WhileSubscribed(1000L),
+                replay = 1,
+            )
+        }
+
+    private val favorites = movieDao.favorites().mapLatest { dbFavoriteMovies ->
+        dbFavoriteMovies.map { dbFavoriteMovie ->
+            Movie(
+                id = dbFavoriteMovie.id,
+                imageUrl = dbFavoriteMovie.posterUrl,
+                title = "",
+                overview = "",
+                isFavorite = true,
+            )
+        }
+    }.flowOn(bgDispatcher)
+
+    override fun movies(movieCategory: MovieCategory): Flow<List<Movie>> =
+        moviesByCategory[movieCategory]!!
+
+    override fun movieDetails(movieId: Int): Flow<MovieDetails> = flow {
+        emit(movieService.fetchMovieDetails(movieId) to movieService.fetchMovieCredits(movieId))
+    }.flatMapLatest { (apiMovieDetails, apiMovieCredits) ->
+        movieDao.favorites()
+            .map { favoriteMovies ->
+                apiMovieDetails.fetchMovieDetails(
+                    isFavorite = favoriteMovies.any { it.id == apiMovieDetails.id },
+                    crew = apiMovieCredits.crew,
+                    cast = apiMovieCredits.cast,
                 )
             }
-            .flowOn(ioDispatcher)
+    }.flowOn(bgDispatcher)
 
-    override fun favoriteMovies(): Flow<List<Movie>> = movies.map {
-        it.filter { fakeMovie -> fakeMovie.isFavorite }
+    override fun favoriteMovies(): Flow<List<Movie>> = favorites
+
+
+    private suspend fun findMovie(movieId: Int): Movie? {
+        for (movieCategory in MovieCategory.values()) {
+            val movies = movies(movieCategory).first()
+            for (movie in movies) {
+                if (movie.id == movieId) {
+                    return movie
+                }
+            }
+        }
+        return null
     }
 
     override suspend fun addMovieToFavorites(movieId: Int) {
-        FavoritesDBMock.insert(movieId)
+        val movie = findMovie(movieId)
+        val dbFavoriteMovie = DbFavoriteMovie(id = movieId, posterUrl = movie?.imageUrl ?: "")
+        runBlocking(bgDispatcher) {
+            movieDao.insertMovie(dbFavoriteMovie)
+        }
     }
 
     override suspend fun removeMovieFromFavorites(movieId: Int) {
-        FavoritesDBMock.delete(movieId)
+        runBlocking(bgDispatcher) {
+            movieDao.deleteMovie(movieId)
+        }
     }
 
-    override suspend fun toggleFavorite(movieId: Int) =
-        if (FavoritesDBMock.favoriteIds.value.contains(movieId)) {
-            removeMovieFromFavorites(movieId)
-        } else {
-            addMovieToFavorites(movieId)
-        }
+    override suspend fun toggleFavorite(movieId: Int) {
+        val listOfFavorites = movieDao.favorites().first()
+        val isFavorite = listOfFavorites.any { it.id == movieId }
+        if (isFavorite) removeMovieFromFavorites(movieId)
+        else addMovieToFavorites(movieId)
+    }
+
 }

@@ -16,10 +16,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -39,9 +36,10 @@ fun MovieDetailsRoute(
     viewModel: MovieDetailsViewModel,
     modifier: Modifier = Modifier
 ) {
-    val movieDetailsViewState by remember { mutableStateOf(movieDetailsViewState) }
+    val movieDetailsViewState: MovieDetailsViewState by viewModel.movieDetailViewState.collectAsState()
     MovieDetailsScreen(movieDetailsViewState = movieDetailsViewState)
 }
+
 
 @Composable
 fun MovieDetailsScreen(movieDetailsViewState: MovieDetailsViewState) {

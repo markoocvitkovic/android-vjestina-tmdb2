@@ -10,21 +10,17 @@ import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     private val movieRepository: MovieRepository,
-    movieDetailsMapper: MovieDetailsMapper,
-    movieId: Int
+    private val movieDetailsMapper: MovieDetailsMapper,
+    private val movieId: Int
 ) : ViewModel() {
-    val movieDetailsViewState: StateFlow<MovieDetailsViewState> =
-        movieRepository.movieDetails(movieId)
-            .map { movies -> movieDetailsMapper.toMovieDetailsViewState(movies) }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.Eagerly,
-                movieDetailsMapper.toMovieDetailsViewState(MoviesMock.getMovieDetails(movieId))
-            )
+    val movieDetailViewState: StateFlow<MovieDetailsViewState> =
+        movieRepository.movieDetails(movieId).map { movieDetails ->
+            movieDetailsMapper.toMovieDetailsViewState(movieDetails)
+        }.stateIn(viewModelScope, SharingStarted.Lazily, MovieDetailsViewState.getEmptyObject())
 
-    fun toggleFavorite(movieId: Int) {
+    fun toggleFavorite(Id: Int) {
         viewModelScope.launch {
-            movieRepository.toggleFavorite(movieId)
+            movieRepository.toggleFavorite(Id)
         }
     }
 }
